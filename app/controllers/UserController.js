@@ -3,6 +3,7 @@ const CONFIG = require('../config/config');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
+
 function index(req, res) {
     // busco todos los users y si no da error me devuelve arreglo users
     Userc.find({}).then(users => {
@@ -16,7 +17,7 @@ function index(req, res) {
 function create(req, res) {
     //se inicializa una variable con los datos de mi body
     let usuario = new Userc(req.body);
-   
+
     //guardo con el metodo save el nuevo usuario
     usuario.save().then(user => {
         payload = { //se debe meter fecha de entrega
