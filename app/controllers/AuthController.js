@@ -72,6 +72,7 @@ function loginToken(req, res) {
 
 }
 
-
-module.exports = login;
-module.exports = loginToken;
+module.exports = {
+    login,
+    loginToken
+};
