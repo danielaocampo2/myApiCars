@@ -18,13 +18,13 @@ function login(req, res) {
             .then(match => {
                 if (match) {
                     payload = { //se debe meter fecha de entrega
-                        email: user.email,
-                        name: user.name,
-                        _id: user._id,
-                        role: user.role
-                    }
-                    //acceso con web token npm i jsonwebtoken
-                    jwt.sign(payload, CONFIG.SECRET_TOKEN, function (error, token) {
+                            email: user.email,
+                            name: user.name,
+                            _id: user._id,
+                            role: user.role
+                        }
+                        //acceso con web token npm i jsonwebtoken
+                    jwt.sign(payload, CONFIG.SECRET_TOKEN, function(error, token) {
                         if (error) {
                             res.status(500).send({ error });
                         } else {
@@ -33,7 +33,7 @@ function login(req, res) {
                     });
 
                 } else {
-                    res.status(200).send({ message: "Password mala" });//no doy acceso
+                    res.status(200).send({ message: "Password mala" }); //no doy acceso
                 }
 
             }).catch(error => { //se le envia tambien el status para mejorar practicas
@@ -74,4 +74,4 @@ function loginToken(req, res) {
 
 
 module.exports = login;
-module.exports = loginToken;  
+module.exports = loginToken;
