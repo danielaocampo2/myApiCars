@@ -20,15 +20,19 @@ function create(req, res) {
 
     //guardo con el metodo save el nuevo usuario
     usuario.save().then(user => {
-        payload = { //se debe meter fecha de entrega
-            email: user.email,
-            name: user.name,
-            _id: user._id,
-            role: user.role
-        }
-        const token = jwt.sign(payload, CONFIG.SECRET_TOKEN); // aca se deberia de poner la duración del token y demas
+        /* payload = { //se debe meter fecha de entrega
+             email: user.email,
+             name: user.name,
+             _id: user._id,
+             role: user.role
 
-        return res.status(201).send({ user, token });
+         }*/
+        //const token = jwt.sign(payload, CONFIG.SECRET_TOKEN); // aca se deberia de poner la duración del token y demas
+
+        /* return res.status(201).send({ user, token });*/
+        return res.status(201).send({ user, message: "El usuario fue creado exitosamente" });
+
+
     }).catch(error => res.status(500).send({ message: "El usuario ya existe", error }));
 }
 

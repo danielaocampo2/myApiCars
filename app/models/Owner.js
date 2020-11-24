@@ -34,9 +34,9 @@ const OwnerSchema = new mongoose.Schema({
     }
 });
 // este metodo ejecuta un hook antes de un metodo
-OwnerSchema.pre('save', function(next) {
+/*OwnerSchema.pre('save', function(next) {
     next();
-});
+});*/
 
 const Owner = mongoose.model('Owner', OwnerSchema);
 
