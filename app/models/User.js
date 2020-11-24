@@ -28,6 +28,10 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         default: Date.now()
     },
+    estado: {
+        type: String,
+        default: "1"
+    },
     role: {
         type: String,
         default: "admin",

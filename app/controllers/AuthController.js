@@ -17,21 +17,24 @@ function login(req, res) {
         bcrypt.compare(password, user.password)
             .then(match => {
                 if (match) {
-                    payload = { //se debe meter fecha de entrega
-                            email: user.email,
-                            name: user.name,
-                            _id: user._id,
-                            role: user.role
-                        }
-                        //acceso con web token npm i jsonwebtoken
-                    jwt.sign(payload, CONFIG.SECRET_TOKEN, function(error, token) {
-                        if (error) {
-                            res.status(500).send({ error });
-                        } else {
-                            res.status(200).send({ message: "accedido", token });
-                        }
-                    });
-
+                    if (user.estado == 1) {
+                        payload = { //se debe meter fecha de entrega
+                                email: user.email,
+                                name: user.name,
+                                _id: user._id,
+                                role: user.role
+                            }
+                            //acceso con web token npm i jsonwebtoken
+                        jwt.sign(payload, CONFIG.SECRET_TOKEN, function(error, token) {
+                            if (error) {
+                                res.status(500).send({ error });
+                            } else {
+                                res.status(200).send({ message: "accedido", token });
+                            }
+                        });
+                    } else {
+                        res.status(200).send({ message: "Empleado desactivado" });
+                    }
                 } else {
                     res.status(200).send({ message: "Password mala" }); //no doy acceso
                 }
