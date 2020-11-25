@@ -32,6 +32,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         default: "1"
     },
+    imgUrl: {
+        type: String,
+        required: false
+    },
     role: {
         type: String,
         default: "admin",

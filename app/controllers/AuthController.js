@@ -29,12 +29,13 @@ function login(req, res) {
                             if (error) {
                                 res.status(500).send({ error });
                             } else {
-                                res.status(200).send({ message: "accedido", token });
+                                res.status(200).send({ message: "accedido", token, role: payload.role });
                             }
                         });
                     } else {
                         res.status(200).send({ message: "Empleado desactivado" });
                     }
+
                 } else {
                     res.status(200).send({ message: "Password mala" }); //no doy acceso
                 }

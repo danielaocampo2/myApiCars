@@ -54,11 +54,22 @@ function update(req, res) {
     ussuario.save().then(user => res.status(200).send({ message: "UPDATED", user })).catch(error => res.status(500).send({ error }));
 }
 
-function remove(req, res) {
+/*function remove(req, res) {
     if (req.body.error) return res.status(500).send({ error });
     if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
     req.body.users[0].remove().then(user => res.status(200).send({ message: "REMOVED", user })).catch(error => res.status(500).send({ error }));
+}*/
+function desactivar(req, res) {
+    if (req.body.error) return res.status(500).send({ error });
+    //Se valida si no hay Users.
+    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
+    let ussuario = req.body.users[0];
+    console.log(ussuario);
+    //creo un nuevo objeto con las cosas que quiero cambiarle
+    ussuario = Object.assign(ussuario, req.body);
+    ussuario.save().then(user => res.status(200).send({ message: "DESACTIVADO", user })).catch(error => res.status(500).send({ error }));
 }
+
 
 
 // como buscar se repite en show, update y remove hago una funcion
@@ -168,10 +179,11 @@ module.exports = {
     show,
     create,
     update,
-    remove,
+    //remove,
     find,
     showTeam,
     privateTasks,
     showProfile,
-    verifyToken
+    verifyToken,
+    desactivar,
 };
