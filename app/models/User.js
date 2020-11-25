@@ -28,7 +28,7 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         default: Date.now()
     },
-    estado: {
+    status: {
         type: String,
         default: "1"
     },

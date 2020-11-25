@@ -17,7 +17,7 @@ function login(req, res) {
         bcrypt.compare(password, user.password)
             .then(match => {
                 if (match) {
-                    if (user.estado == 1) {
+                    if (user.status == 1) {
                         payload = { //se debe meter fecha de entrega
                                 email: user.email,
                                 name: user.name,
