@@ -54,6 +54,7 @@ const UserSchema = new mongoose.Schema({
 });
 // este metodo ejecuta un hook antes de un metodo
 UserSchema.pre('save', function(next) {
+
     bcrypt.genSalt(10).then(salts => {
         //me encriptara una cadena de caracteres, me devuelve una promesa con el hash , y ese hash lo guardo
         bcrypt.hash(this.password, salts).then(hash => {
@@ -61,6 +62,8 @@ UserSchema.pre('save', function(next) {
             next();
         }).catch(error => next(error));
     }).catch(error => next(error));
+
+
 });
 
 const User = mongoose.model('User', UserSchema);
