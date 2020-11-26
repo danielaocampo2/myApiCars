@@ -77,7 +77,7 @@ function desactivar(req, res) {
     let update = { status: "0" };
     Userc.updateOne(query, update, (err, user) => {
         if (err) res.status(500).send({ message: `Error ${err}` })
-        res.status(200).send({ message: "DESACTIVO" })
+        res.status(200).send({ message: "DESACTIVADO" })
     });
 }
 
