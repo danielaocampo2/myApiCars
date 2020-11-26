@@ -50,6 +50,20 @@ function update(req, res) {
     if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
     let query = {};
     query[req.params.key] = req.params.value;
+    let ussuario = req.body.users[0];
+    if (req.body.name == undefined || req.body.name == "") {
+        req.body.name = ussuario.name;
+    }
+    if (req.body.imgUrl == undefined || req.body.imgUrl == "") {
+        req.body.imgUrl = ussuario.imgUrl;
+    }
+    if (req.body.email == undefined || req.body.email == "") {
+        req.body.email = ussuario.email;
+    }
+    if (req.body.phone == undefined || req.body.phone == "") {
+        req.body.phone = ussuario.phone;
+    }
+
     let update = {
         name: req.body.name,
         imgUrl: req.body.imgUrl,
