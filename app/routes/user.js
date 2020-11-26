@@ -9,8 +9,7 @@ routerU.get('/showWorkers', UserCtrl.index) // api.com/user/  #Index: listar tod
     .get('/:key/:value', UserCtrl.find, UserCtrl.show) // api.com/user/category/Hogar #show: muestra un user en especifico
     .put('/:key/:value', UserCtrl.find, UserCtrl.update) // api.com/user/name/SamsungGalaxy #update : actualizar un user en especifico
     //.delete('/:key/:value', UserCtrl.find, UserCtrl.remove) // api.com/user/name/SamsungGalaxy
-
-.put('/desactivar/:key/:value', UserCtrl.find, UserCtrl.desactivar)
+    .put('/desactivar/:key/:value', UserCtrl.find, UserCtrl.desactivar)
     .put('/activar/:key/:value', UserCtrl.find, UserCtrl.activar)
     .get('/team', UserCtrl.showTeam)
     .get('/private-tasks' /*,UserCtrl.verifyToken*/ , UserCtrl.privateTasks)

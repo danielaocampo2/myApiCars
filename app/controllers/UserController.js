@@ -3,7 +3,6 @@ const CONFIG = require('../config/config');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const Product = require('../models/Product');
-const bcrypt = require('bcrypt');
 
 
 function index(req, res) {
@@ -48,21 +47,21 @@ function show(req, res) {
 
 function update(req, res) {
     if (req.body.error) return res.status(500).send({ error });
-    //Se valida si no hay Users.
     if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
-    let ussuario = req.body.users[0];
-    //creo un nuevo objeto con las cosas que quiero cambiarle
-    console.log("constraseña que tiene actual actualizacion: " + ussuario.password);
-    if (req.body.password == undefined) {
-        console.log("entro");
-        req.body.password = ussuario.password;
-    } else {
-        cryptPassword(req.body);
-    }
-    console.log("constraseña que tiene en body: " + req.body.password);
-    ussuario = Object.assign(ussuario, req.body);
-    ussuario.save().then(user => res.status(200).send({ message: "UPDATED", user })).catch(error => res.status(500).send({ error }));
+    let query = {};
+    query[req.params.key] = req.params.value;
+    let update = {
+        imgUrl: req.body.imgUrl,
+        email: req.body.email,
+        phone: req.body.phone
+    };
+    Userc.updateOne(query, update, (err, user) => {
+        if (err) res.status(500).send({ message: `Error ${err}` })
+        res.status(200).send({ message: "Actualizacion correcta" })
+    });
 }
+
+// Crear el de actulizar contraseña
 
 /*function remove(req, res) {
     if (req.body.error) return res.status(500).send({ error });
@@ -71,23 +70,27 @@ function update(req, res) {
 }*/
 function desactivar(req, res) {
     if (req.body.error) return res.status(500).send({ error });
+    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
     //Se valida si no hay Users.
-    let ussuario = req.body.users[0];
+    let query = {};
+    query[req.params.key] = req.params.value;
     let update = { status: "0" };
-    //creo un nuevo objeto con las cosas que quiero cambiarle
-    ussuario = Object.assign(ussuario, update);
-
-    ussuario.save().then(user => res.status(200).send({ message: "INACTIVO" })).catch(error => res.status(500).send({ error }));
+    Userc.updateOne(query, update, (err, user) => {
+        if (err) res.status(500).send({ message: `Error ${err}` })
+        res.status(200).send({ message: "DESACTIVO" })
+    });
 }
 
 function activar(req, res) {
     if (req.body.error) return res.status(500).send({ error });
-    //Se valida si no hay Users.
-    let ussuario = req.body.users[0];
+    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
+    let query = {};
+    query[req.params.key] = req.params.value;
     let update = { status: "1" };
-    //creo un nuevo objeto con las cosas que quiero cambiarle
-    ussuario = Object.assign(ussuario, update);
-    ussuario.save().then(user => res.status(200).send({ message: "ACTIVO" })).catch(error => res.status(500).send({ error }));
+    Userc.updateOne(query, update, (err, user) => {
+        if (err) res.status(500).send({ message: `Error ${err}` })
+        res.status(200).send({ message: "ACTIVADO" })
+    });
 }
 
 
@@ -189,18 +192,6 @@ function verifyToken(req, res, next) {
 
 }
 
-function cryptPassword(req) {
-
-    bcrypt.genSalt(10).then(salts => {
-        //me encriptara una cadena de caracteres, me devuelve una promesa con el hash , y ese hash lo guardo
-        bcrypt.hash(req.password, salts).then(hash => {
-            req.password = hash;
-            next();
-        }).catch(error => next(error));
-    }).catch(error => next(error));
-
-
-}
 
 
 

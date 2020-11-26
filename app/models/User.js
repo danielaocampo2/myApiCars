@@ -36,6 +36,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    phone: {
+        type: String,
+        required: true
+    },
     role: {
         type: String,
         default: "admin",
@@ -62,7 +66,6 @@ UserSchema.pre('save', function(next) {
             next();
         }).catch(error => next(error));
     }).catch(error => next(error));
-
 
 });
 
