@@ -51,13 +51,13 @@ function update(req, res) {
     let query = {};
     query[req.params.key] = req.params.value;
     let ussuario = req.body.users[0];
-    if (req.body.name == undefined || req.body.name == "") {
+    if (req.body.name == undefined || req.body.name == "" || req.body.name == null) {
         req.body.name = ussuario.name;
     }
-    if (req.body.imgUrl == undefined || req.body.imgUrl == "") {
+    if (req.body.imgUrl == undefined || req.body.imgUrl == "" || req.body.imgUrl == null) {
         req.body.imgUrl = ussuario.imgUrl;
     }
-    if (req.body.email == undefined || req.body.email == "") {
+    if (req.body.email == undefined || req.body.email == "" || req.body.email == null) {
         req.body.email = ussuario.email;
     }
     if (req.body.phone == undefined || req.body.phone == "" || req.body.phone == null) {
@@ -81,7 +81,7 @@ function updatePassword(req, res) {
     //Se valida si no hay Users.
     if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
     let ussuario = req.body.users[0];
-    if (req.body.password == undefined || req.body.password == "") {
+    if (req.body.password == undefined || req.body.password == "" || req.body.password == null) {
         return res.status(400).send({ error: "Password debe ser diferente de null" })
     }
     //creo un nuevo objeto con las cosas que quiero cambiarle
