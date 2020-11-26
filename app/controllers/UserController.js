@@ -51,6 +51,7 @@ function update(req, res) {
     let query = {};
     query[req.params.key] = req.params.value;
     let update = {
+        name: req.body.name,
         imgUrl: req.body.imgUrl,
         email: req.body.email,
         phone: req.body.phone
