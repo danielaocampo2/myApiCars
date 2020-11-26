@@ -60,7 +60,7 @@ function update(req, res) {
     if (req.body.email == undefined || req.body.email == "") {
         req.body.email = ussuario.email;
     }
-    if (req.body.phone == undefined || req.body.phone == "") {
+    if (req.body.phone == undefined || req.body.phone == "" || req.body.phone == null) {
         req.body.phone = ussuario.phone;
     }
 
