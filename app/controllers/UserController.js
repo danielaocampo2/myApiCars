@@ -61,6 +61,19 @@ function update(req, res) {
     });
 }
 
+function updatePassword(req, res) {
+    if (req.body.error) return res.status(500).send({ error });
+    //Se valida si no hay Users.
+    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
+    let ussuario = req.body.users[0];
+    if (req.body.password == undefined || req.body.password == "") {
+        return res.status(400).send({ error: "Password debe ser diferente de null" })
+    }
+    //creo un nuevo objeto con las cosas que quiero cambiarle
+    ussuario = Object.assign(ussuario, req.body);
+    ussuario.save().then(user => res.status(200).send({ message: "Contraseña Actualizada", user })).catch(error => res.status(500).send({ error }));
+}
+
 // Crear el de actulizar contraseña
 
 /*function remove(req, res) {
@@ -68,7 +81,7 @@ function update(req, res) {
     if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
     req.body.users[0].remove().then(user => res.status(200).send({ message: "REMOVED", user })).catch(error => res.status(500).send({ error }));
 }*/
-function desactivar(req, res) {
+function inactivate(req, res) {
     if (req.body.error) return res.status(500).send({ error });
     if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
     //Se valida si no hay Users.
@@ -81,7 +94,7 @@ function desactivar(req, res) {
     });
 }
 
-function activar(req, res) {
+function activate(req, res) {
     if (req.body.error) return res.status(500).send({ error });
     if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
     let query = {};
@@ -171,7 +184,6 @@ function showProfile(req, res) {
 
 
 function verifyToken(req, res, next) {
-    //console.log(req.headers.authorization);
     if (!req.headers.authorization) {
         return res.status(401).send('No posee headers para esta Request');
     }
@@ -206,6 +218,7 @@ module.exports = {
     privateTasks,
     showProfile,
     verifyToken,
-    desactivar,
-    activar
+    inactivate,
+    activate,
+    updatePassword
 };

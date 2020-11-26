@@ -14,8 +14,6 @@ function login(req, res) {
     User.findOne({ email }).then(user => { // se puede solo username
         if (!user) res.status(404).send({ message: "El usuario no existe" });
         //si existe, hago mi logica de login
-        console.log("llega: " + password);
-        console.log("tenia: " + user.password);
         bcrypt.compare(password, user.password)
             .then(match => {
                 if (match) {
