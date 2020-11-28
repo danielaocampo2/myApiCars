@@ -132,7 +132,7 @@ function refreshtoken(req, res, next) {
             from: 'jdpautos24@gmail.com',
             to: user.email,
             subject: 'JDPAUTOS TOKEN ACTUALIZADO',
-            text: "Gracias "+ user.name +  " por por preferir JDPAUTOS. \n Este es su token para ver el estado de reparación su vehiculo: \n" + user.token
+            text: "Gracias "+ user.name +  " por preferir JDPAUTOS. \n Este es su token para ver el estado de reparación su vehiculo: \n" + user.token
         };
 
         user.save().then(() => {
