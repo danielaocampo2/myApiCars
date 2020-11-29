@@ -277,13 +277,14 @@ function addphoto(req,res){
                 if(error) return res.status(500).send({ message: 'No fue posible guardar la imagen', error });
                 
                 let update = {
-                    imgUrl: "public/upload/"+nameFile
+                   // imgUrl: 'app/public/upload/'+nameFile
+                   imgUrl: `${CONFIG.HOST}:${CONFIG.PORT}/public/${nameFile}`
                 };
                 Userc.updateOne(query2, update, (err, user) => {
                     if (err) res.status(500).send({ message: `Error ${err}` })
                     
                     res.status(200).send({ message: "Foto agregada correctamente"});
-
+//
                 }); 
     
             });

@@ -6,6 +6,8 @@ const Auth = require('./routes/auth');
 const Owner = require('./routes/owner');
 const AuthToken = require('./middleware/AuthToken')
 
+
+
 const app = express();
 const cors = require('cors');
 app.use(cors());
@@ -19,8 +21,9 @@ app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
 
 //para que pueda guardar imagenes ARRIBA SE PUSO 50mb para controlar el tamaño de imagen
-app.use("/public/upload", express.static(__dirname + "app/public/upload"));
-
+app.use('/public', express.static(`${__dirname}/public/upload/`));
+//`${__dirname}/public/upload/`
+//(__dirname + "/public/upload")
 
 
 /// creo el path primero /product y ya lo que sigue de la , es el product que puede variar
