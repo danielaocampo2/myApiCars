@@ -40,14 +40,14 @@ function create(req, res) {
 
 function show(req, res) {
     if (req.body.error) return res.status(500).send({ error });
-    if (!req.body.users) return res.status(404).send({ message: 'Not Found :"V' });
+    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
     let users = req.body.users;
     return res.status(200).send({ users });
 }
 
 function update(req, res) {
     if (req.body.error) return res.status(500).send({ error });
-    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND1' });
+    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
     let query = {};
     query[req.params.key] = req.params.value;
     let ussuario = req.body.users[0];
@@ -79,7 +79,7 @@ function update(req, res) {
 function updatePassword(req, res) {
     if (req.body.error) return res.status(500).send({ error });
     //Se valida si no hay Users.
-    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND2' });
+    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
     let ussuario = req.body.users[0];
     if (req.body.password == undefined || req.body.password == "" || req.body.password == null) {
         return res.status(400).send({ error: "Password debe ser diferente de null" })
@@ -98,7 +98,7 @@ function updatePassword(req, res) {
 }*/
 function inactivate(req, res) {
     if (req.body.error) return res.status(500).send({ error });
-    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND3' });
+    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
     //Se valida si no hay Users.
     let query = {};
     query[req.params.key] = req.params.value;
@@ -111,7 +111,7 @@ function inactivate(req, res) {
 
 function activate(req, res) {
     if (req.body.error) return res.status(500).send({ error });
-    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND4' });
+    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
     let query = {};
     query[req.params.key] = req.params.value;
     let update = { status: "1" };
@@ -271,15 +271,23 @@ function addphoto(req, res) {
         let imagen = req.body.imgUrl;
         let fs = require('fs');
         let nameFile = req.params.value + ".jpg";
-
+        let update;
         //ruta en donde pondre mi archivo
         fs.writeFile('app/public/upload/' + nameFile, imagen, 'base64', (error) => {
             if (error) return res.status(500).send({ message: 'No fue posible guardar la imagen', error });
 
-            let update = {
-                // imgUrl: 'app/public/upload/'+nameFile
-                imgUrl: `${CONFIG.HOST}:${CONFIG.PORT}/public/${nameFile}`
-            };
+            if (CONFIG.HOST == 'http://localhost') {
+                update = {
+                    // imgUrl: 'app/public/upload/'+nameFile
+                    imgUrl: `${CONFIG.HOST}:${CONFIG.PORT}/public/${nameFile}`
+
+                };
+            } else {
+                update = {
+                    // imgUrl: 'app/public/upload/'+nameFile
+                    imgUrl: `${CONFIG.HOST}/public/${nameFile}`
+                };
+            }
             Userc.updateOne(query2, update, (err, user) => {
                 if (err) res.status(500).send({ message: `Error ${err}` })
 
