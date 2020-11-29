@@ -180,7 +180,7 @@ function showTeam(req, res) {
 function privateTasks(req, res) {
     let query = {};
     query["role"] = "admin";
-    Userc.find(query).then(users => {
+    Userc.find().then(users => {
         //si no existen users
         if (!users.length) return next();
         // en caso de que si haya , se crea un user en el body (no existia)
