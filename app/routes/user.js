@@ -15,5 +15,6 @@ routerU.get('/showWorkers', UserCtrl.index) // api.com/user/  #Index: listar tod
     .get('/team', UserCtrl.showTeam)
     .get('/private-tasks' /*,UserCtrl.verifyToken*/ , UserCtrl.privateTasks)
     .get('/profile', UserCtrl.verifyToken, UserCtrl.showProfile)
+    .post('/agregarfoto/:value', UserCtrl.findSpecificUser,UserCtrl.verifyTokenUser,UserCtrl.addphoto)
 
 module.exports = routerU;

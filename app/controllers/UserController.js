@@ -33,8 +33,8 @@ function create(req, res) {
         /* return res.status(201).send({ user, token });*/
         return res.status(201).send({ user, message: "El usuario fue creado exitosamente" });
 
-
-    }).catch(error => res.status(500).send({ message: "El usuario ya existe", error }));
+         ///422
+    }).catch(error => res.status(422).send({ message: "El usuario ya existe", error }));
 }
 
 
@@ -47,7 +47,7 @@ function show(req, res) {
 
 function update(req, res) {
     if (req.body.error) return res.status(500).send({ error });
-    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
+    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND1' });
     let query = {};
     query[req.params.key] = req.params.value;
     let ussuario = req.body.users[0];
@@ -79,7 +79,7 @@ function update(req, res) {
 function updatePassword(req, res) {
     if (req.body.error) return res.status(500).send({ error });
     //Se valida si no hay Users.
-    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
+    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND2' });
     let ussuario = req.body.users[0];
     if (req.body.password == undefined || req.body.password == "" || req.body.password == null) {
         return res.status(400).send({ error: "Password debe ser diferente de null" })
@@ -98,7 +98,7 @@ function updatePassword(req, res) {
 }*/
 function inactivate(req, res) {
     if (req.body.error) return res.status(500).send({ error });
-    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
+    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND3' });
     //Se valida si no hay Users.
     let query = {};
     query[req.params.key] = req.params.value;
@@ -111,7 +111,7 @@ function inactivate(req, res) {
 
 function activate(req, res) {
     if (req.body.error) return res.status(500).send({ error });
-    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND' });
+    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND4' });
     let query = {};
     query[req.params.key] = req.params.value;
     let update = { status: "1" };
@@ -214,10 +214,94 @@ function verifyToken(req, res, next) {
             next();
         } else return res.status(401).send('No tiene el rol necesario para esta Request');
     });
-
-
-
 }
+
+//verificar que el usuario sea el que quiera acceder a una ruta con id especifico
+function findSpecificUser(req,res,next){
+    let query = {};
+    query["id_user"] = req.params.value;
+    let pepe;
+    Userc.find(query).then(users => {
+        //si no existen users
+        if (!users.length) next();
+        // en caso de que si haya , se crea un user en el body (no existia)
+        req.body.users = users;
+        next();
+    }).catch(error => {
+        req.body.error = error;
+    });
+}
+
+
+function verifyTokenUser(req, res, next) {
+    if (req.body.error) return res.status(500).send({ error });
+    if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND USER WITH THAT ID' });
+
+    if (!req.headers.authorization) {
+        return res.status(401).send('No posee headers para esta Request');
+    }
+    const token = req.headers.authorization.split(' ')[1]; // para separar el token de bearer, toma solo el token
+    if (token === 'null') {
+        return res.status(401).send('no posee token para esta Request');
+    }
+    jwt.verify(token, CONFIG.SECRET_TOKEN, function(error, decoded) {
+        if (error) return res.status(403).send({ message: 'Fallo al decodificar token', error });
+            req.body.ide = decoded.id_user;
+            next();
+
+    });
+}
+
+
+function addphoto(req,res){
+    //VERIFICA SI EL TOKEN PERTENECE AL QUE QUIERE AGG LA FOTO.
+    console.log("XDDDDDD");
+    if(req.body.ide!=req.params.value){
+        return res.status(401).send({message: "No puede agregar foto a otro usuario"});
+    }
+    let ussuario = req.body.users[0];
+    let query2 = {};
+    query2["id_user"] = req.params.value;
+    let query = {};
+    query["imgUrl"] = req.params.value;
+    //comparo si metio un buen body
+    if(req.body.imgUrl != "" || req.body.imgUrl != undefined || req.body.imgUrl != null){
+        if(ussuario.imgUrl != "empty"){
+            console.log(ussuario.imgUrl)
+            return res.send({ message: "Este usuario ya tiene foto" });
+        }else{
+            let imagen = req.body.imgUrl;
+            let fs = require('fs');
+            let nameFile = req.params.value;
+    
+            //ruta en donde pondre mi archivo
+            fs.writeFile('public/upload/'+nameFile+".jpg", imagen, 'base64', (error)=>{
+                if(error) return res.status(500).send({ message: 'No fue posible guardar la imagen', error });
+                
+                let update = {
+                    imgUrl: nameFile+".jpg"
+                };
+                Userc.updateOne(query2, update, (err, user) => {
+                    if (err) res.status(500).send({ message: `Error ${err}` })
+                    
+                    res.status(200).send({ message: "Foto agregada correctamente"});
+
+
+                }); 
+    
+            });
+            
+        }
+    }else{
+        return res.send({ message: "El campo de imgUrl no es valido" });
+    }
+}
+
+
+
+
+
+
 
 
 
@@ -235,5 +319,8 @@ module.exports = {
     verifyToken,
     inactivate,
     activate,
-    updatePassword
+    updatePassword,
+    addphoto,
+    verifyTokenUser,
+    findSpecificUser
 };

@@ -22,6 +22,7 @@ function login(req, res) {
                             email: user.email,
                             name: user.name,
                             _id: user._id,
+                            id_user: user.id_user,
                             role: user.role
                         }
                         //acceso con web token npm i jsonwebtoken
@@ -42,11 +43,11 @@ function login(req, res) {
 
             }).catch(error => { //se le envia tambien el status para mejorar practicas
                 console.log(error);
-                res.status(500).send({ error });
+                res.status(400).send({ error });
             });
-    }).catch(error => { //este error no es si no existe el username en la db
+    }).catch(error => { //este error no se , si no existe el username en la db
         console.log(error);
-        res.status(500).send({ error });
+        res.status(400).send({ error });
     });
 
 }
@@ -56,7 +57,7 @@ function loginToken(req, res) {
     let tokken = req.body.token;
     jwt.verify(tokken, 'JDPAUTOS', function (error, respuesta) {
         if (error) {
-            res.status(404).send({ message: "Token invalido" });
+            res.status(400).send({ message: "Token invalido" });
         } else {
             let email = respuesta.email;
             Owner.findOne({ email }).then(user => { // se puede solo username
@@ -74,7 +75,7 @@ function loginToken(req, res) {
                 }
             }).catch(error => { //este error no es si no existe el username en la db
                 console.log(error);
-                res.status(500).send({ error });
+                res.status(400).send({ error });
             });
         }
     });

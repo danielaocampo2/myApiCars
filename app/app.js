@@ -13,11 +13,13 @@ app.use(cors());
 //app.use(AuthToken); // antes d ecualquier ruta se ejecuta este 
 
 
-//para poder manejar jsons, peticiones y respuestas
-app.use(bodyParser.json());
+//para poder manejar jsons, peticiones y respuestas 
+app.use(bodyParser.json({limit: '50mb'}));
 //se dice que no utilizamos peticiones directamente en formularios, sino que se procesa en formato json
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
 
+//para que pueda guardar imagenes ARRIBA SE PUSO 50mb para controlar el tamaño de imagen
+app.use("/public/upload", express.static(__dirname + "/public/upload"));
 
 
 

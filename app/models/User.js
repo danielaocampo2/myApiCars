@@ -34,7 +34,8 @@ const UserSchema = new mongoose.Schema({
     },
     imgUrl: {
         type: String,
-        required: false
+        required: false,
+        default: "empty"
     },
     phone: {
         type: String,
