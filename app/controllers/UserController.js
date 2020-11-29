@@ -255,43 +255,40 @@ function verifyTokenUser(req, res, next) {
 
 function addphoto(req,res){
     //VERIFICA SI EL TOKEN PERTENECE AL QUE QUIERE AGG LA FOTO.
-    console.log("XDDDDDD");
     if(req.body.ide!=req.params.value){
         return res.status(401).send({message: "No puede agregar foto a otro usuario"});
     }
     let ussuario = req.body.users[0];
     let query2 = {};
     query2["id_user"] = req.params.value;
-    let query = {};
-    query["imgUrl"] = req.params.value;
+/*     let query = {};
+    query["imgUrl"] = req.params.value; */
     //comparo si metio un buen body
     if(req.body.imgUrl != "" || req.body.imgUrl != undefined || req.body.imgUrl != null){
-        if(ussuario.imgUrl != "empty"){
-            console.log(ussuario.imgUrl)
-            return res.send({ message: "Este usuario ya tiene foto" });
-        }else{
+
+            //return res.status(422).send({ message: "Este usuario ya tiene foto" });
+     
             let imagen = req.body.imgUrl;
             let fs = require('fs');
-            let nameFile = req.params.value;
+            let nameFile = req.params.value+".jpg";
     
             //ruta en donde pondre mi archivo
-            fs.writeFile('public/upload/'+nameFile+".jpg", imagen, 'base64', (error)=>{
+            fs.writeFile('app/public/upload/'+nameFile, imagen, 'base64', (error)=>{
                 if(error) return res.status(500).send({ message: 'No fue posible guardar la imagen', error });
                 
                 let update = {
-                    imgUrl: nameFile+".jpg"
+                    imgUrl: "public/upload/"+nameFile
                 };
                 Userc.updateOne(query2, update, (err, user) => {
                     if (err) res.status(500).send({ message: `Error ${err}` })
                     
                     res.status(200).send({ message: "Foto agregada correctamente"});
 
-
                 }); 
     
             });
-            
-        }
+        
+        
     }else{
         return res.send({ message: "El campo de imgUrl no es valido" });
     }
