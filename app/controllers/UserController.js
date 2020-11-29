@@ -33,7 +33,7 @@ function create(req, res) {
         /* return res.status(201).send({ user, token });*/
         return res.status(201).send({ user, message: "El usuario fue creado exitosamente" });
 
-         ///422
+        ///422
     }).catch(error => res.status(422).send({ message: "El usuario ya existe", error }));
 }
 
@@ -217,7 +217,7 @@ function verifyToken(req, res, next) {
 }
 
 //verificar que el usuario sea el que quiera acceder a una ruta con id especifico
-function findSpecificUser(req,res,next){
+function findSpecificUser(req, res, next) {
     let query = {};
     query["id_user"] = req.params.value;
     let pepe;
@@ -238,59 +238,59 @@ function verifyTokenUser(req, res, next) {
     if (!req.body.users) return res.status(404).send({ message: 'NOT FOUND USER WITH THAT ID' });
 
     if (!req.headers.authorization) {
-        return res.status(401).send('No posee headers para esta Request');
+        return res.status(401).send({ message: 'No posee headers para esta Request' });
     }
     const token = req.headers.authorization.split(' ')[1]; // para separar el token de bearer, toma solo el token
     if (token === 'null') {
-        return res.status(401).send('no posee token para esta Request');
+        return res.status(401).send({ message: 'no posee token para esta Request' });
     }
     jwt.verify(token, CONFIG.SECRET_TOKEN, function(error, decoded) {
         if (error) return res.status(403).send({ message: 'Fallo al decodificar token', error });
-            req.body.ide = decoded.id_user;
-            next();
+        req.body.ide = decoded.id_user;
+        next();
 
     });
 }
 
 
-function addphoto(req,res){
+function addphoto(req, res) {
     //VERIFICA SI EL TOKEN PERTENECE AL QUE QUIERE AGG LA FOTO.
-    if(req.body.ide!=req.params.value){
-        return res.status(401).send({message: "No puede agregar foto a otro usuario"});
+    if (req.body.ide != req.params.value) {
+        return res.status(401).send({ message: "No puede agregar foto a otro usuario" });
     }
     let ussuario = req.body.users[0];
     let query2 = {};
     query2["id_user"] = req.params.value;
-/*     let query = {};
-    query["imgUrl"] = req.params.value; */
+    /*     let query = {};
+        query["imgUrl"] = req.params.value; */
     //comparo si metio un buen body
-    if(req.body.imgUrl != "" || req.body.imgUrl != undefined || req.body.imgUrl != null){
+    if (req.body.imgUrl != "" || req.body.imgUrl != undefined || req.body.imgUrl != null) {
 
-            //return res.status(422).send({ message: "Este usuario ya tiene foto" });
-     
-            let imagen = req.body.imgUrl;
-            let fs = require('fs');
-            let nameFile = req.params.value+".jpg";
-    
-            //ruta en donde pondre mi archivo
-            fs.writeFile('app/public/upload/'+nameFile, imagen, 'base64', (error)=>{
-                if(error) return res.status(500).send({ message: 'No fue posible guardar la imagen', error });
-                
-                let update = {
-                   // imgUrl: 'app/public/upload/'+nameFile
-                   imgUrl: `${CONFIG.HOST}:${CONFIG.PORT}/public/${nameFile}`
-                };
-                Userc.updateOne(query2, update, (err, user) => {
-                    if (err) res.status(500).send({ message: `Error ${err}` })
-                    
-                    res.status(200).send({ message: "Foto agregada correctamente"});
-//
-                }); 
-    
+        //return res.status(422).send({ message: "Este usuario ya tiene foto" });
+
+        let imagen = req.body.imgUrl;
+        let fs = require('fs');
+        let nameFile = req.params.value + ".jpg";
+
+        //ruta en donde pondre mi archivo
+        fs.writeFile('app/public/upload/' + nameFile, imagen, 'base64', (error) => {
+            if (error) return res.status(500).send({ message: 'No fue posible guardar la imagen', error });
+
+            let update = {
+                // imgUrl: 'app/public/upload/'+nameFile
+                imgUrl: `${CONFIG.HOST}:${CONFIG.PORT}/public/${nameFile}`
+            };
+            Userc.updateOne(query2, update, (err, user) => {
+                if (err) res.status(500).send({ message: `Error ${err}` })
+
+                res.status(200).send({ message: "Foto agregada correctamente" });
+                //
             });
-        
-        
-    }else{
+
+        });
+
+
+    } else {
         return res.send({ message: "El campo de imgUrl no es valido" });
     }
 }

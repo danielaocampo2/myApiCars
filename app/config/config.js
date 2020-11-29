@@ -1,10 +1,6 @@
 //
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1b4b111cede15d86187e7db6352e3dc65733201d
 module.exports = {
     HOST: process.env.HOST || "http://localhost",
     PORT: process.env.PORT || 3000,
