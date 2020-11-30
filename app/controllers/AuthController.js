@@ -19,18 +19,18 @@ function login(req, res) {
                 if (match) {
                     if (user.status == 1) {
                         payload = { //se debe meter fecha de entrega
-                            email: user.email,
-                            name: user.name,
-                            _id: user._id,
-                            id_user: user.id_user,
-                            role: user.role
-                        }
-                        //acceso con web token npm i jsonwebtoken
-                        jwt.sign(payload, CONFIG.SECRET_TOKEN, function (error, token) {
+                                email: user.email,
+                                name: user.name,
+                                _id: user._id,
+                                id_user: user.id_user,
+                                role: user.role
+                            }
+                            //acceso con web token npm i jsonwebtoken
+                        jwt.sign(payload, CONFIG.SECRET_TOKEN, function(error, token) {
                             if (error) {
                                 res.status(500).send({ error });
                             } else {
-                                res.status(200).send({ message: "accedido", token, role: payload.role });
+                                res.status(200).send({ message: "accedido", token, role: payload.role, id: payload.id_user });
                             }
                         });
                     } else {
@@ -55,7 +55,7 @@ function login(req, res) {
 function loginToken(req, res) {
 
     let tokken = req.body.token;
-    jwt.verify(tokken, 'JDPAUTOS', function (error, respuesta) {
+    jwt.verify(tokken, 'JDPAUTOS', function(error, respuesta) {
         if (error) {
             res.status(400).send({ message: "Token invalido" });
         } else {
