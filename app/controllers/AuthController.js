@@ -43,11 +43,11 @@ function login(req, res) {
 
             }).catch(error => { //se le envia tambien el status para mejorar practicas
                 console.log(error);
-                res.status(400).send({ error });
+                res.status(400).send({ error: "el campo email y password, son requeridos" });
             });
     }).catch(error => { //este error no se , si no existe el username en la db
         console.log(error);
-        res.status(400).send({ error });
+        res.status(400).send({ error: "Campo no encontrados" });
     });
 
 }
