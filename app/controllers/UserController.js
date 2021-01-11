@@ -2,7 +2,7 @@ const Userc = require('../models/User');
 const CONFIG = require('../config/config');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-const Product = require('../models/Product');
+const Product = require('../models/Car');
 
 
 function index(req, res) {
@@ -63,12 +63,17 @@ function update(req, res) {
     if (req.body.phone == undefined || req.body.phone == "" || req.body.phone == null) {
         req.body.phone = ussuario.phone;
     }
+    if (req.body.status == undefined || req.body.status == "" || req.body.status == null) {
+        req.body.status = ussuario.status;
+    }
+
 
     let update = {
         name: req.body.name,
         imgUrl: req.body.imgUrl,
         email: req.body.email,
-        phone: req.body.phone
+        phone: req.body.phone,
+        status: req.body.status
     };
     Userc.updateOne(query, update, (err, user) => {
         if (err) res.status(500).send({ message: `Error ${err}` })
