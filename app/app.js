@@ -1,9 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const Product = require('./routes/product');
 const User = require('./routes/user');
 const Auth = require('./routes/auth');
 const Owner = require('./routes/owner');
+const Reparation = require('./routes/reparation');
 const AuthToken = require('./middleware/AuthToken')
 
 
@@ -26,14 +26,13 @@ app.use('/public', express.static(`${__dirname}/public/upload/`));
 //(__dirname + "/public/upload")
 
 
-/// creo el path primero /product y ya lo que sigue de la , es el product que puede variar
-app.use('/product', Product);
 // creo el path primero /user y ya lo que sigue de la , es el product que puede variar
 app.use('/user', User);
 // crea el path /auth
 app.use('/auth', Auth);
 //crea el path owner
 app.use('/owner', Owner);
-
+//crea el path reparacion
+app.use('/reparation', Reparation);
 
 module.exports = app;

@@ -1,4 +1,4 @@
-const Product = require('../models/Product');
+/* const Product = require('../models/Product');
 
 function index(req,res){
     // busco todos los prodctos y si no da error me devuelve arreglos products
@@ -69,4 +69,4 @@ module.exports = {
     update,
     remove,
     find
-}
+} */
