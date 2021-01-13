@@ -47,7 +47,7 @@ function update(req, res) {
     }
     owner.find({ "id_owner": req.body.id_owner }, (err, car) => {
         if (err) res.status(500).send({ message: `Error ${err}` })
-        if (!car.length) return res.status(404).send({ message: `Error propietario no existe` });
+        if (!car.length) return res.status(404).send({ message: `Error propietario no existe en BD` });
         let update = {
             id_owner: req.body.id_owner,
             marca: req.body.marca,
@@ -86,7 +86,7 @@ function find(req, res, next) {
 
 function create(req, res) {
     if (req.body.error) return res.status(500).send({ error });
-    if (!req.body.cars) return res.status(404).send({ message: 'El propietario no existe en la BD' });
+    if (!req.body.cars) return res.status(404).send({ message: 'Error propietario no existe en BD' });
     let car = new Carc(req.body);
     car.save().then(car => {
         return res.status(201).send({ car, message: "El vehiculo fue registrado exitosamente" });
