@@ -11,7 +11,8 @@ const ReparationSchema = new moongose.Schema({
         type: String,
         required: true,
         enum: ["En curso",
-               "Finalizado"]
+               "Finalizado"],
+        default: "En curso"
     },
     detalles: {
         type: String,
@@ -20,6 +21,11 @@ const ReparationSchema = new moongose.Schema({
     precio: {
         type: Number,
         required: true
+    },status: {
+        type: String,
+        default: "1",
+        enum: ["1",
+               "0"]
     }
 });
 

@@ -1,4 +1,5 @@
 const ReparationM = require('../models/Reparation');
+const CarM = require('../models/Car');
 
 
 function index(req, res) {
@@ -6,17 +7,33 @@ function index(req, res) {
         // si hay usuarios envio codigo de aceptacion y un cuerpo con los prdctos
         if (reparations.length) return res.status(200).send({ reparations });
         //en caso de que no hayan datos se manda un codigo y un mensaje xD
-        return res.status(204).send({ message: 'NO CONTENT' });
+        return res.status(204).send({ message: 'No hay contenido en la db de reparaciones' });
     }).catch(error => res.status(500).send({ error }));
 }
 
-function findPlaca(req, res) {
+function findPorPlaca(req, res) {
     //se hara lo siguiente para entrar por ejemplo (categoria: 'Hogar')
     let query = {};
     query["placa"] = req.params.value;
     ReparationM.find(query).then(reparations => {
-        if (reparations.length) return res.status(200).send({ reparations });
-        return res.status(204).send({ message: 'NO CONTENT' });
+        if (reparations.length === 0) {
+            if (!req.body.reparations) return res.status(404).send({ message: 'Error, no existen reparaciones de esa placa' });
+        }
+        return res.status(200).send({ reparations });
+
+    }).catch(error => {
+        return res.status(404).send({ message: 'Error, no hay reparaciones para esa placa' });
+    });
+}
+
+function existePlaca(req, res, next) {
+    //se hara lo siguiente para entrar por ejemplo (categoria: 'Hogar')
+    let query = {};
+    query["placa"] = req.body.placa;
+    CarM.find(query).then(car => {
+        if (!car.length) return next();
+        req.body.car = car;
+        return next();
     }).catch(error => {
         req.body.error = error;
         next();
@@ -24,7 +41,36 @@ function findPlaca(req, res) {
 }
 
 
+
+function findPorPlacaActivos(req, res) {
+    //se hara lo siguiente para entrar por ejemplo (categoria: 'Hogar')
+    let query = {};
+    query["placa"] = req.params.value;
+    ReparationM.find(query).then(reparations => {
+        if (reparations.length === 0) {
+            return res.status(404).send({ message: 'Error, no existen reparaciones de esa placa' });
+        }
+        let query2 = {};
+        query2["status"] = "1";
+        query2["placa"] = req.params.value;
+        ReparationM.find(query2).then(rreparations => {
+            if (rreparations.length) {
+                return res.status(200).send({ rreparations });
+            }
+           return res.status(204).send({ message: 'No existen reparaciones activas de esa placa' }); 
+            
+        }).catch(error => {
+            return res.status(500).send({ error });
+        });
+    }).catch(error => {
+        return res.status(500).send({ error });
+    });
+}
+
+
 function create(req, res) {
+    if (req.body.error) return res.status(500).send({ error });
+    if (!req.body.car) return res.status(404).send({ message: 'Error, no existe el carro en la DB' });
     let rreparacion = new ReparationM(req.body);
     //guardo con el metodo save el nuevo usuario
     rreparacion.save().then(reparacion => {
@@ -32,7 +78,7 @@ function create(req, res) {
     }).catch(error => res.status(422).send({ message: "La reparacion ya existe", error }));
 }
 
-function find(req,res,next){
+function find(req, res, next) {
     let query = {};
     query["_id"] = req.params.value;
     ReparationM.find(query).then(reparations => {
@@ -47,9 +93,8 @@ function find(req,res,next){
     });
 }
 
-function editReparation(req,res){
-    if (req.body.error) return res.status(500).send({ error });
-    if (!req.body.reparations) return res.status(404).send({ message: 'NOT FOUND' });
+function editReparation(req, res) {
+    if (!req.body.reparations) return res.status(404).send({ message: 'Error, reparacion no encontrada en DB' });
     let query = {};
     query["_id"] = req.params.value;
     let rreparacion = req.body.reparations[0];
@@ -65,12 +110,16 @@ function editReparation(req,res){
     if (req.body.precio == undefined || req.body.precio == "" || req.body.precio == null) {
         req.body.precio = rreparacion.precio;
     }
+    if (req.body.status == undefined || req.body.status == "" || req.body.status == null) {
+        req.body.status = rreparacion.status;
+    }
 
     let update = {
         placa: req.body.placa,
         estado: req.body.estado,
         detalles: req.body.detalles,
         precio: req.body.precio,
+        status: req.body.status
     };
 
     ReparationM.updateOne(query, update, (err, reparacion) => {
@@ -80,10 +129,17 @@ function editReparation(req,res){
 
 }
 
+function remove(req, res) {
+    if (!req.body.reparations) return res.status(404).send({ message: 'Error, no existe reparacion en DB' });
+    req.body.reparations[0].remove().then(reparacion => res.status(200).send({ message: "Reparacion eliminada", reparacion })).catch(error => res.status(500).send({ error }));
+}
 module.exports = {
     index,
-    findPlaca,
+    findPorPlaca,
     create,
     find,
-    editReparation
+    editReparation,
+    findPorPlacaActivos,
+    existePlaca,
+    remove
 };
