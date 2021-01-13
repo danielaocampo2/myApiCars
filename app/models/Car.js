@@ -8,7 +8,7 @@ const CarSchema = new moongose.Schema({
         unique: true,
         required: true
     },
-    owner_id: {
+    id_owner: {
         type: String,
         required: true
     },
@@ -23,12 +23,13 @@ const CarSchema = new moongose.Schema({
     color: {
         type: String
     },
-    color: {
-        type: String
-    },
     date_in: {
         type: Date,
         default: Date.now()
+    },
+    status: {
+        type: String,
+        default: "1"
     }
 });
 
