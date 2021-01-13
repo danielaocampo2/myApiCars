@@ -6,9 +6,7 @@ const nodemailer = require('nodemailer');
 
 function index(req, res) {
     Carc.find({}).then(cars => {
-        // si hay usuarios envio codigo de aceptacion y un cuerpo con los prdctos
         if (cars.length) return res.status(200).send({ cars });
-        //en caso de que no hayan datos se manda un codigo y un mensaje xD
         return res.status(204).send({ message: 'NO CONTENT' });
     }).catch(error => res.status(500).send({ error }));
 }
@@ -28,9 +26,7 @@ function update(req, res) {
     let query = {};
     query[req.params.key] = req.params.value;
     let car = req.body.cars[0];
-    if (req.body.placa == undefined || req.body.placa == "" || req.body.placa == null) {
-        req.body.placa = car.placa;
-    }
+
     if (req.body.id_owner == undefined || req.body.id_owner == "" || req.body.id_owner == null) {
         req.body.id_owner = car.id_owner;
     }
@@ -49,27 +45,36 @@ function update(req, res) {
     if (req.body.status == undefined || req.body.status == "" || req.body.status == null) {
         req.body.status = car.status;
     }
-
-
-    let update = {
-        placa: req.body.placa,
-        id_owner: req.body.id_owner,
-        marca: req.body.marca,
-        model: req.body.model,
-        color: req.body.color,
-        date_in: req.body.date_in,
-        status: req.body.status
-    };
-    Carc.updateOne(query, update, (err, car) => {
+    owner.find({ "id_owner": req.body.id_owner }, (err, car) => {
         if (err) res.status(500).send({ message: `Error ${err}` })
-        res.status(200).send({ message: "Actualizacion correcta" })
+        if (!car.length) return res.status(404).send({ message: `Error propietario no existe` });
+        let update = {
+            id_owner: req.body.id_owner,
+            marca: req.body.marca,
+            model: req.body.model,
+            color: req.body.color,
+            date_in: req.body.date_in,
+            status: req.body.status
+        };
+        Carc.updateOne(query, update, (err, car) => {
+            if (err) res.status(500).send({ message: `Error ${err}` })
+            res.status(200).send({ message: "Actualizacion correcta" })
+        });
+
+
     });
+
+
+
+
+
+
 }
 
 function find(req, res, next) {
     let query = {};
     query[req.params.key] = req.params.value;
-    Carsc.find(query).then(cars => {
+    Carc.find(query).then(cars => {
         if (!cars.length) return next();
         req.body.cars = cars;
         return next();
@@ -90,9 +95,7 @@ function create(req, res) {
 
 function existsOwner(req, res, next) {
 
-    console.log(req.body.id_owner);
     owner.find({ "id_owner": req.body.id_owner }).then(cars => {
-
         if (!cars.length) return next();
         req.body.cars = cars;
         return next();
