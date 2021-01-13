@@ -75,7 +75,7 @@ function create(req, res) {
     //guardo con el metodo save el nuevo usuario
     rreparacion.save().then(reparacion => {
         return res.status(201).send({ reparacion, message: "La reparacion fue creada exitosamente" });
-    }).catch(error => res.status(422).send({ message: "La reparacion ya existe", error }));
+    }).catch(error => res.status(422).send({ message: "Error al guardar reparacion", error }));
 }
 
 function find(req, res, next) {
@@ -112,6 +112,12 @@ function editReparation(req, res) {
     }
     if (req.body.status == undefined || req.body.status == "" || req.body.status == null) {
         req.body.status = rreparacion.status;
+    }
+
+    if (req.body.estado == "En curso" || req.body.estado == "Finalizado")  {
+        /** se hizo este if para que funcione */
+    }else{
+        return res.status(500).send({ message: "Error al editar reparacion" })
     }
 
     let update = {

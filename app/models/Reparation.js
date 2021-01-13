@@ -24,6 +24,7 @@ const ReparationSchema = new moongose.Schema({
     },status: {
         type: String,
         default: "1",
+        required: true,
         enum: ["1",
                "0"]
     }
