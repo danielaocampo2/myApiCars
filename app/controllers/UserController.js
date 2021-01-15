@@ -89,9 +89,34 @@ function updatePassword(req, res) {
     if (req.body.password == undefined || req.body.password == "" || req.body.password == null) {
         return res.status(400).send({ error: "Password debe ser diferente de null" })
     }
-    //creo un nuevo objeto con las cosas que quiero cambiarle
-    ussuario = Object.assign(ussuario, req.body);
-    ussuario.save().then(user => res.status(200).send({ message: "Contraseña Actualizada", user })).catch(error => res.status(500).send({ error }));
+    //Coje el token y mira si es valido, la respuesta son los datos del token
+    let tokken = req.body.token;
+    jwt.verify(tokken, 'JDPAUTOS', function (error, respuesta) {
+        if (error) {
+            res.status(400).send({ message: "Token invalido" });
+        } else {
+            let email = respuesta.email;
+            Userc.findOne({ email }).then(user => { // se puede solo username
+                if (!user) res.status(404).send({ message: "El email no existe" });
+                //verificar que el id del token sea igual al que esta en la base de datos, para mas seguridad
+                if (user.id_user == respuesta.id) {
+                    //si la fecha de caducidad es mayor a la fecha de actual, entonces es valido
+                    if (Date.now() < respuesta.fechaCaduca) {
+                        //creo un nuevo objeto con las cosas que quiero cambiarle
+                        ussuario = Object.assign(ussuario, req.body);
+                        ussuario.save().then(user => res.status(200).send({ message: "Contraseña Actualizada" })).catch(error => res.status(500).send({ error }));
+                    } else {
+                        res.status(404).send({ message: "Este token es antiguo, reenvie el correo para actualizar contraseña" });
+                    }
+                } else {
+                    res.status(404).send({ message: "Token invalido, diferente id" });
+                }
+            }).catch(error => { //este error no es si no existe el username en la db
+                console.log(error);
+                res.status(400).send({ error });
+            });
+        }
+    });
 }
 
 // Crear el de actulizar contraseña
@@ -149,35 +174,35 @@ function find(req, res, next) {
 
 function showTeam(req, res) {
     res.json([{
-            _id: 1, // datos publicos 
-            name: 'Daniela Ocampo',
-            description: 'Gerente general',
-            date: "2020-10-25T01:43:19.346Z"
-        },
-        {
-            _id: 2,
-            name: 'Arcangel  Marin',
-            description: 'Asistente de gerencia',
-            date: "2020-10-25T01:43:19.346Z"
-        },
-        {
-            _id: 3,
-            name: 'Pedro Rios',
-            description: 'Gerente financiero',
-            date: "2020-10-25T01:43:19.346Z"
-        },
-        {
-            _id: 4,
-            name: 'Jhon Vasquez ',
-            description: 'Asistente financiero',
-            date: "2020-10-25T01:43:19.346Z"
-        },
-        {
-            _id: 4,
-            name: 'Samuel Gil ',
-            description: 'Técnico',
-            date: "2020-10-25T01:43:19.346Z"
-        }
+        _id: 1, // datos publicos 
+        name: 'Daniela Ocampo',
+        description: 'Gerente general',
+        date: "2020-10-25T01:43:19.346Z"
+    },
+    {
+        _id: 2,
+        name: 'Arcangel  Marin',
+        description: 'Asistente de gerencia',
+        date: "2020-10-25T01:43:19.346Z"
+    },
+    {
+        _id: 3,
+        name: 'Pedro Rios',
+        description: 'Gerente financiero',
+        date: "2020-10-25T01:43:19.346Z"
+    },
+    {
+        _id: 4,
+        name: 'Jhon Vasquez ',
+        description: 'Asistente financiero',
+        date: "2020-10-25T01:43:19.346Z"
+    },
+    {
+        _id: 4,
+        name: 'Samuel Gil ',
+        description: 'Técnico',
+        date: "2020-10-25T01:43:19.346Z"
+    }
     ]);
 
 }
@@ -211,7 +236,7 @@ function verifyToken(req, res, next) {
     if (token === 'null') {
         return res.status(401).send('no posee token para esta Request');
     }
-    jwt.verify(token, CONFIG.SECRET_TOKEN, function(error, decoded) {
+    jwt.verify(token, CONFIG.SECRET_TOKEN, function (error, decoded) {
         if (error) return res.status(403).send({ message: 'Fallo al decodificar token', error });
         //req.userId = payload._id;
         if (decoded.role == "admin") {
@@ -249,7 +274,7 @@ function verifyTokenUser(req, res, next) {
     if (token === 'null') {
         return res.status(401).send({ message: 'no posee token para esta Request' });
     }
-    jwt.verify(token, CONFIG.SECRET_TOKEN, function(error, decoded) {
+    jwt.verify(token, CONFIG.SECRET_TOKEN, function (error, decoded) {
         if (error) return res.status(403).send({ message: 'Fallo al decodificar token', error });
         req.body.ide = decoded.id_user;
         next();
@@ -257,7 +282,55 @@ function verifyTokenUser(req, res, next) {
     });
 }
 
+function sendEmailPassword(req, res) {
+    console.log("entra")
+    let email = req.body.email;
+    Userc.findOne({ email }).then(user => { // se puede solo username
+        if (!user) res.status(404).send({ message: "El email no existe" });
+        //le damos un dia mas de acceso al token
 
+        /*         let datos = jwt.verify(user.token, 'JDPAUTOS');
+                datos.fechaCaduca = Date.now() + 86400000;
+                user.token = jwt.sign(datos, 'JDPAUTOS'); */
+
+        //Creamos objeto del emisor
+        let emailer = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'jdpautos24@gmail.com',
+                pass: 'arcangel27dejulio'
+            }
+        });
+        let fecha = Date.now() + 3600000; //60 minutos para que caduque
+        //creamos el token
+        tokken = {
+            email: user.email,
+            fechaCaduca: fecha,
+            id: user.id_user
+        }
+        const tok = jwt.sign(tokken, 'JDPAUTOS');
+        //datos del receptor
+        let mailOptions = {
+            from: 'jdpautos24@gmail.com',
+            to: user.email,
+            subject: 'TOKEN PARA ACTUALIZAR CONTRASEÑA',
+            text: "Este es su token para actualizar su constraseña: \n" + tok
+        };
+        //Enviamos el email
+        emailer.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+        return res.status(201).send({ message: "Correo enviado con exito" });
+    }).catch(error => { //este error no es si no existe el username en la db
+        console.log(error);
+        res.status(500).send({ error });
+    });
+
+}
 function addphoto(req, res) {
     //VERIFICA SI EL TOKEN PERTENECE AL QUE QUIERE AGG LA FOTO.
     if (req.body.ide != req.params.value) {
@@ -333,5 +406,6 @@ module.exports = {
     updatePassword,
     addphoto,
     verifyTokenUser,
-    findSpecificUser
+    findSpecificUser,
+    sendEmailPassword
 };
