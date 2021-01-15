@@ -10,7 +10,7 @@ routerU.get('/showWorkers', UserCtrl.index) // api.com/user/  #Index: listar tod
     .put('/:key/:value', UserCtrl.find, UserCtrl.update) // api.com/user/name/SamsungGalaxy #update : actualizar un user en especifico
     //.delete('/:key/:value', UserCtrl.find, UserCtrl.remove) // api.com/user/name/SamsungGalaxy
     .put('/desactivar/:key/:value', UserCtrl.find, UserCtrl.inactivate)
-    .post('/password/email', UserCtrl.sendEmailPassword)
+    .post('/password/recuperar', UserCtrl.sendEmailPassword)
     .put('/activar/:key/:value', UserCtrl.find, UserCtrl.activate)
     .put('/password/:key/:value', UserCtrl.find, UserCtrl.updatePassword)
     .get('/team', UserCtrl.showTeam)
