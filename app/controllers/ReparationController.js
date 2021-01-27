@@ -1,6 +1,9 @@
 const ReparationM = require('../models/Reparation');
 const CarM = require('../models/Car');
+const nodemailer = require('nodemailer');
+const owner = require('../models/Owner');
 
+let reparacionGlobal;
 
 function index(req, res) {
     ReparationM.find({}).then(reparations => {
@@ -127,11 +130,55 @@ function editReparation(req, res) {
         precio: req.body.precio,
         status: req.body.status
     };
+    //Verificamos si la reparacion ya finalizo
+    if (req.body.estado === "Finalizado") {
+        let queryz = {};
+        queryz["placa"] = req.body.placa;
+        reparacionGlobal = req.body.placa;
+        CarM.find(queryz).then(car => {
+            if (!car.length) return res.status(404).send({ message: 'NO HAY CARRO CON ESA ID' });
+            let query2 = {};        
+            query2["id_owner"] = car[0].id_owner;
+            owner.find(query2).then(ownerr => {
+                if (!ownerr.length) return res.status(404).send({ message: 'NO HAY DUEÑO DE ESE CARRO' });
+                //enviamos correo
+                let emailerr = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: 'jdpautos24@gmail.com',
+                        pass: 'arcangel27dejulio'
+                    }
+                });
+                
+                let mailOptionss = {
+                    from: 'jdpautos24@gmail.com',
+                    to: ownerr[0].email,
+                    subject: 'JDPAUTOS - REPARACION FINALIZADA',
+                    text: "Saludos, "+ ownerr[0].name +  " \n Le informamos que la reparación del carro con placa: " + reparacionGlobal + "\n ha finalizado, puede acercarse al local para hacer el pago y retirarlo"
+                };
+    
+                emailerr.sendMail(mailOptionss, function (error, info) {
+                    if (error) {
+                        //console.log(error);
+                    } else {
+                        //console.log('Email sent: ' + info.response);
+                    }
+                });
+    
+            }).catch(error => {
+                return res.status(500).send({ error });
+            });
 
+
+        }).catch(error => {
+            return res.status(500).send({ error });
+        });
+    }
     ReparationM.updateOne(query, update, (err, reparacion) => {
         if (err) res.status(500).send({ message: `Error ${err}` })
         res.status(200).send({ message: "Actualizacion correcta" })
     });
+
 
 }
 
