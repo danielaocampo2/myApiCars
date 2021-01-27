@@ -12,7 +12,8 @@ const cors = require('cors');
 //app.use(cors());
 
 app.use(cors({
-    origin: 'https://danielaocampo2.github.io'
+    //origin: 'https://danielaocampo2.github.io'
+    origin: 'https://estoEsUnEnsayo.com'
 }));
 /*
 var whitelist = ['http://localhost:3000/']
