@@ -9,21 +9,24 @@ const Reparation = require('./routes/reparation');
 const AuthToken = require('./middleware/AuthToken')
 const app = express();
 const cors = require('cors');
-app.use(cors());
+//app.use(cors());
 
-
-/* var whitelist = ['http://localhost:3000/']
+app.use(cors({
+    origin: 'http://yourapp.com'
+}));
+/*
+var whitelist = ['http://localhost:3000/']
 var corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS XDDD'))
+    origin: function(origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS XDDD'))
+        }
     }
-  }
-} */
+}
 
-
+*/
 //app.use(AuthToken); // antes d ecualquier ruta se ejecuta este 
 
 
@@ -42,9 +45,9 @@ app.use('/public', express.static(`${__dirname}/public/upload/`));
 app.use('/user', User);
 app.use('/car', Car);
 // crea el path /auth
-app.use('/auth',  Auth);
+app.use('/auth', Auth);
 //crea el path owner
-app.use('/owner',  Owner);
+app.use('/owner', Owner);
 //crea el path reparacion
 app.use('/reparation', Reparation);
 
