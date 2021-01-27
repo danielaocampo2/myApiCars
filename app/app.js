@@ -14,12 +14,13 @@ const app = express();
 const cors = require('cors');
 app.use(cors());
 
-var whitelist = ['https://danielaocampo2.github.io/JDPAutos/']
+var whitelist = ['https://danielaocampo2.github.io']
 var corsOptions = {
         origin: function(origin, callback) {
             if (whitelist.indexOf(origin) !== -1) {
                 callback(null, true)
             } else {
+                console.log('entro a lo de CORSSSSSSSSSSSSSSSSS')
                 callback(new Error('holaaaaaaaaaaa Not allowed by CORS'))
             }
         }
