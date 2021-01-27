@@ -12,7 +12,7 @@ const cors = require('cors');
 app.use(cors());
 
 
-var whitelist = ['https://danielaocampo2.github.io/']
+/* var whitelist = ['http://localhost:3000/']
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
@@ -21,7 +21,7 @@ var corsOptions = {
       callback(new Error('Not allowed by CORS XDDD'))
     }
   }
-}
+} */
 
 
 //app.use(AuthToken); // antes d ecualquier ruta se ejecuta este 
@@ -39,14 +39,14 @@ app.use('/public', express.static(`${__dirname}/public/upload/`));
 
 
 // creo el path primero /user y ya lo que sigue de la , es el product que puede variar
-app.use('/user',cors(corsOptions), User);
-app.use('/car',cors(corsOptions), Car);
+app.use('/user', User);
+app.use('/car', Car);
 // crea el path /auth
-app.use('/auth',cors(corsOptions),  Auth);
+app.use('/auth',  Auth);
 //crea el path owner
-app.use('/owner',cors(corsOptions),  Owner);
+app.use('/owner',  Owner);
 //crea el path reparacion
-app.use('/reparation', cors(corsOptions), Reparation);
+app.use('/reparation', Reparation);
 
 
 
