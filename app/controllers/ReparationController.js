@@ -57,8 +57,8 @@ function findPorPlacaActivos(req, res) {
             if (rreparations.length) {
                 return res.status(200).send({ rreparations });
             }
-           return res.status(204).send({ message: 'No existen reparaciones activas de esa placa' }); 
-            
+            return res.status(204).send({ message: 'No existen reparaciones activas de esa placa' });
+
         }).catch(error => {
             return res.status(500).send({ error });
         });
@@ -114,9 +114,9 @@ function editReparation(req, res) {
         req.body.status = rreparacion.status;
     }
 
-    if (req.body.estado == "En curso" || req.body.estado == "Finalizado")  {
+    if (req.body.estado == "En curso" || req.body.estado == "Finalizado") {
         /** se hizo este if para que funcione */
-    }else{
+    } else {
         return res.status(500).send({ message: "Error al editar reparacion" })
     }
 

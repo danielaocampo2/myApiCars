@@ -14,7 +14,17 @@ const app = express();
 const cors = require('cors');
 app.use(cors());
 
-//app.use(AuthToken); // antes d ecualquier ruta se ejecuta este 
+var whitelist = ['https://danielaocampo2.github.io/JDPAutos/']
+var corsOptions = {
+        origin: function(origin, callback) {
+            if (whitelist.indexOf(origin) !== -1) {
+                callback(null, true)
+            } else {
+                callback(new Error('Not allowed by CORS'))
+            }
+        }
+    }
+    //app.use(AuthToken); // antes d ecualquier ruta se ejecuta este 
 
 
 //para poder manejar jsons, peticiones y respuestas 
@@ -29,13 +39,15 @@ app.use('/public', express.static(`${__dirname}/public/upload/`));
 
 
 // creo el path primero /user y ya lo que sigue de la , es el product que puede variar
-app.use('/user', User);
-app.use('/car', Car);
+app.use('/user', User, corsOptions);
+app.use('/car', Car, corsOptions);
 // crea el path /auth
-app.use('/auth', Auth);
+app.use('/auth', Auth, corsOptions);
 //crea el path owner
-app.use('/owner', Owner);
+app.use('/owner', Owner, corsOptions);
 //crea el path reparacion
-app.use('/reparation', Reparation);
+app.use('/reparation', Reparation, corsOptions);
+
+
 
 module.exports = app;
