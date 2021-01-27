@@ -30,14 +30,14 @@ app.use('/public', express.static(`${__dirname}/public/upload/`));
 
 
 // creo el path primero /user y ya lo que sigue de la , es el product que puede variar
-app.use('/user', User, corsOptions);
-app.use('/car', Car, corsOptions);
+app.use('/user', User);
+app.use('/car', Car);
 // crea el path /auth
-app.use('/auth', Auth, corsOptions);
+app.use('/auth', Auth);
 //crea el path owner
-app.use('/owner', Owner, corsOptions);
+app.use('/owner', Owner);
 //crea el path reparacion
-app.use('/reparation', Reparation, corsOptions);
+app.use('/reparation', Reparation);
 
 
 
