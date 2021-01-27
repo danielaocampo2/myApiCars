@@ -48,4 +48,6 @@ app.use('/owner',cors(corsOptions),  Owner);
 //crea el path reparacion
 app.use('/reparation', cors(corsOptions), Reparation);
 
+
+
 module.exports = app;
