@@ -131,7 +131,7 @@ function editReparation(req, res) {
         status: req.body.status
     };
     //Verificamos si la reparacion ya finalizo
-    if (req.body.estado === "Finalizado") {
+    if (req.body.estado === "Finalizado"  ) {
         let queryz = {};
         queryz["placa"] = req.body.placa;
         reparacionGlobal = req.body.placa;
