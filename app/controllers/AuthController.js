@@ -71,7 +71,7 @@ function loginToken(req, res) {
                         Owner.find(query).then(ownerr => {
                             if (!ownerr.length) return res.status(404).send({ message: 'NO Hay dueño para ese token' });
                             let id = ownerr[0].id_owner;
-                            res.status(200).send({ id });
+                            res.status(200).send({ id , message: "accedido" });
                             
                         }).catch(error => {
                             return res.status(500).send({ error });
