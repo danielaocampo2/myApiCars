@@ -2,7 +2,11 @@ const User = require('../models/User');
 const Owner = require('../models/Owner');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Carc = require('../models/Car');
 const CONFIG = require('../config/config');
+const ReparationM = require('../models/Reparation');
+
+let id;
 //el ciente me pasa por post
 //username
 //password
@@ -53,7 +57,7 @@ function login(req, res) {
 }
 
 function loginToken(req, res) {
-
+    let reparacionGlobal = [];
     let tokken = req.body.token;
     jwt.verify(tokken, 'JDPAUTOS', function (error, respuesta) {
         if (error) {
@@ -70,9 +74,29 @@ function loginToken(req, res) {
                         query["email"] = respuesta.email;
                         Owner.find(query).then(ownerr => {
                             if (!ownerr.length) return res.status(404).send({ message: 'NO Hay dueño para ese token' });
-                            let id = ownerr[0].id_owner;
-                            res.status(200).send({ id , message: "accedido" });
-                            
+                            let query2 = {};
+                            id = ownerr[0].id_owner;
+                            query2["id_owner"] = ownerr[0].id_owner;
+                            Carc.find(query2).then(cars => {
+                                if (!cars.length) return res.status(404).send({ message: 'Ese propietario no tiene carros registrados' });
+                                for (let i in cars) {
+                                    let query3 = {};
+                                    query3["status"] = "1";
+                                    query3["placa"] = cars[i].placa;
+                                    ReparationM.find(query3).then(rreparations => {
+                                        if (rreparations.length) {
+                                             reparacionGlobal.push(rreparations);
+                                        }
+                                    });
+                                }
+                                setTimeout(function(){
+                                    return res.status(200).send({ id, message: "accedido" ,reparacionGlobal });
+                                  }, 2000)
+
+                            }).catch(error => {
+                                return res.status(500).send({ error });
+                            });
+
                         }).catch(error => {
                             return res.status(500).send({ error });
                         });
@@ -88,6 +112,10 @@ function loginToken(req, res) {
             });
         }
     });
+}
+
+const forCars = (carros) => {
+
 }
 
 module.exports = {

@@ -2,6 +2,8 @@ const owner = require('../models/Owner');
 const CONFIG = require('../config/config');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const Carc = require('../models/Car');
+const ReparationM = require('../models/Reparation');
 
 function index(req, res) {
     // busco todos los users y si no da error me devuelve arreglo users
