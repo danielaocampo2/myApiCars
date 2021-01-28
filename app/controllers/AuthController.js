@@ -19,14 +19,14 @@ function login(req, res) {
                 if (match) {
                     if (user.status == 1) {
                         payload = { //se debe meter fecha de entrega
-                                email: user.email,
-                                name: user.name,
-                                _id: user._id,
-                                id_user: user.id_user,
-                                role: user.role
-                            }
-                            //acceso con web token npm i jsonwebtoken
-                        jwt.sign(payload, CONFIG.SECRET_TOKEN, function(error, token) {
+                            email: user.email,
+                            name: user.name,
+                            _id: user._id,
+                            id_user: user.id_user,
+                            role: user.role
+                        }
+                        //acceso con web token npm i jsonwebtoken
+                        jwt.sign(payload, CONFIG.SECRET_TOKEN, function (error, token) {
                             if (error) {
                                 res.status(500).send({ error });
                             } else {
@@ -55,7 +55,7 @@ function login(req, res) {
 function loginToken(req, res) {
 
     let tokken = req.body.token;
-    jwt.verify(tokken, 'JDPAUTOS', function(error, respuesta) {
+    jwt.verify(tokken, 'JDPAUTOS', function (error, respuesta) {
         if (error) {
             res.status(400).send({ message: "Token invalido" });
         } else {
@@ -66,7 +66,16 @@ function loginToken(req, res) {
                 if (user.token == tokken) {
                     //si la fecha de caducidad es mayor a la fecha de actual, entonces es valido
                     if (Date.now() < respuesta.fechaCaduca) {
-                        res.status(200).send({ message: "accedido" });
+                        let query = {};
+                        query["email"] = respuesta.email;
+                        Owner.find(query).then(ownerr => {
+                            if (!ownerr.length) return res.status(404).send({ message: 'NO Hay dueño para ese token' });
+                            let id = ownerr[0].id_owner;
+                            res.status(200).send({ id });
+                            
+                        }).catch(error => {
+                            return res.status(500).send({ error });
+                        });
                     } else {
                         res.status(404).send({ message: "El token ha caducado" });
                     }

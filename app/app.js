@@ -11,7 +11,7 @@ const app = express();
 const cors = require('cors');
 //app.use(cors());
 var allowedOrigins = ['http://localhost:4200',
-    'https://danielaocampo2.github.io'
+    'https://danielaocampo2.github.io', 'http://localhost:3000'
 ];
 app.use(cors({
     origin: function(origin, callback) {
